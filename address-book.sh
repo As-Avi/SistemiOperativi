@@ -14,8 +14,8 @@ case $1 in
 
     search)
         IFS=$'\n'
-        risultati=$(grep $2 "$CSV_FILE")
-        if [[ -z $risultati ]]; then
+        risultati=$(grep $2 $CSV_FILE)
+        if [ -z $risultati ]; then
             echo "Nessun risultato trovato."
         fi
         for entry in $risultati; do
@@ -50,8 +50,14 @@ case $1 in
     ;;
 
     delete)
-        grep -v $2 "$CSV_FILE" > "$CSV_FILE.tmp"
-        mv "$CSV_FILE.tmp" "$CSV_FILE"
-        ;;
+        echo -n "Inserisci l'indirizzo e-mail dell'utente da eliminare: "
+        read email
+        if grep -q "$email" "$CSV_FILE"; then
+            grep -v "$email" "$CSV_FILE" > "$CSV_FILE.tmp"
+            mv "$CSV_FILE.tmp" "$CSV_FILE"
+            echo "Deleted"
+        else
+            echo "Cannot find any record"
+        fi
     
 esac

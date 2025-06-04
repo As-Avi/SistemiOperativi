@@ -8,7 +8,7 @@ fi
 
 case $1 in 
     view)
-        cat "$CSV_FILE" | column -s, -t | head -l 
+        cat "$CSV_FILE" | column -s, -t | head -1 
         tail -n $(wc -l "$CSV_FILE") | sort -t, -k4|  column -s, -t "$CSV_FILE" 
         ;;
 

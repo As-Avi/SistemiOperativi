@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "grp.h": "c",
+        "unistd.h": "c",
+        "stdio.h": "c",
+        "stdlib.h": "c",
+        "errno.h": "c",
+        "limits": "c",
+        "stat.h": "c"
+    }
+}

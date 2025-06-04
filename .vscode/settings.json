@@ -6,6 +6,8 @@
         "stdlib.h": "c",
         "errno.h": "c",
         "limits": "c",
-        "stat.h": "c"
+        "stat.h": "c",
+        "string.h": "c",
+        "dirent.h": "c"
     }
 }

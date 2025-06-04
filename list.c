@@ -1,82 +1,75 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <dirent.h>
-#include <sys/stat.h>
-#include <sys/types.h>
+#include <stdlib.h> 
+#include <sys/stat.h> 
+#include <dirent.h> 
 #include <pwd.h>
 #include <grp.h>
 #include <string.h>
-#include <unistd.h>
 #define PATH_MAX 4096
 
-void print_file_info(const char *path, const char *base_path) {
-    struct stat stat_buf;
-    if (lstat(path, &stat_buf) == -1) {
-        perror("lstat");
-    }
+int main(int argc, char *argv[]){
+    struct stat buf;
+    char path[PATH_MAX];
 
-    const char *type;
-    if (S_ISREG(stat_buf.st_mode)) type = "file";
-    else if (S_ISDIR(stat_buf.st_mode)) type = "directory";
-    else if (S_ISLNK(stat_buf.st_mode)) type = "symbolic link";
-    else if (S_ISFIFO(stat_buf.st_mode)) type = "FIFO";
-    else type = "other";
-
-    struct passwd *pw = getpwuid(stat_buf.st_uid);
-    struct group *gr = getgrgid(stat_buf.st_gid);
-
-    printf("Node: %s\n", path);
-    printf("Inode: %lu\n", stat_buf.st_ino);
-    printf("Type: %s\n", type);
-    printf("Size: %ld\n", stat_buf.st_size);
-    printf("Owner: %d %s\n", stat_buf.st_uid, pw ? pw->pw_name : "unknown");
-    printf("Group: %d %s\n", stat_buf.st_gid, gr ? gr->gr_name : "unknown");
-    printf("\n");
-}
-
-void scan_directory(const char *path, const char *base_path) {
-    DIR *dir = opendir(path);
-    if (!dir) {
-        perror("opendir");
-        return;
-    }
-
-    struct dirent *entry;
-    while ((entry = readdir(dir)) != NULL) {
-        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
-            continue;
-
-        char full_path[PATH_MAX];
-        snprintf(full_path, sizeof(full_path), "%s/%s", path, entry->d_name);
-
-        char rel_path[PATH_MAX];
-        if (strcmp(base_path, ".") == 0) {
-            snprintf(rel_path, sizeof(rel_path), "./%s", entry->d_name);
-        } else {
-            snprintf(rel_path, sizeof(rel_path), "%s/%s", base_path, entry->d_name);
-        }
-
-        print_file_info(rel_path, base_path);
-
-        struct stat stat_buf;
-        if (lstat(full_path, &stat_buf) == 0 && S_ISDIR(stat_buf.st_mode)) {
-            scan_directory(full_path, rel_path);
-        }
-    }
-
-    closedir(dir);
-}
-
-
-int main(int argc, char *argv[]) {
-    if (argc != 2) {
-        fprintf(stderr, "Usage: %s <directory>\n", argv[0]);
+    if (argc!=2){
+        printf("Specifica un path\n");
         return 1;
     }
 
-    const char *base_path = argv[1];
-    print_file_info(base_path, base_path);
-    scan_directory(base_path, base_path);
+    if (stat(argv[1], &buf) < 0) {
+        printf ("Impossibile leggere le informazioni sulla directory\n");
+        exit (1); 
+    }
+
+    if(!S_ISDIR(buf.st_mode)) {
+        printf("%s: non è una directory\n", argv[1]);
+        return 1; 
+    }
+    DIR *dir = opendir(argv[1]);
+    if (dir == NULL) {
+        perror("Impossibile aprire la directory");
+        return 1; 
+    }
+    struct dirent *entry;
+    while ((entry = readdir(dir)) != NULL) {
+        snprintf(path, sizeof(path), "%s/%s", argv[1], entry->d_name);
+        if (lstat(path, &buf) < 0) {
+            printf("Impossibile leggere le informazioni sul file");
+            continue; 
+        }
+
+        printf("Node: %s\n", path);
+        printf("Inode: %lu\n", buf.st_ino);
+
+        if (S_ISREG(buf.st_mode)) {
+            printf("Type: file\n");
+        } else if (S_ISDIR(buf.st_mode)) {
+            printf("Type: directory\n");
+        } else if (S_ISLNK(buf.st_mode)) {
+            printf("Type: symbolic link\n");
+        } else if (S_ISFIFO(buf.st_mode)) {
+            printf("Type: FIFO\n");
+        } else if (S_ISCHR(buf.st_mode)) {
+            printf("Type: character device\n");
+        } else if (S_ISBLK(buf.st_mode)) {
+            printf("Type: block device\n");
+        } else if (S_ISSOCK(buf.st_mode)) {
+            printf("Type: socket\n");
+        } else {
+            printf("Type: other\n");
+        }
+
+        printf("Size: %ld\n", buf.st_size);
+        printf("Owner: %d %s\n", buf.st_uid, getpwuid(buf.st_uid)->pw_name);
+        printf("Group: %d %s\n", buf.st_gid, getgrgid(buf.st_gid)->gr_name);
+        printf("\n");
+        
+    }
+    int r = closedir(dir);
+    if (r < 0) {
+        perror("Impossibile chiudere la directory");
+        return 1; 
+    }
 
     return 0;
 }

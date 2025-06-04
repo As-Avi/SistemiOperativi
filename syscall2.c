@@ -12,7 +12,7 @@ int main(int argc, char *argv[]){
     }
 
     if (stat(argv[1], &buf) < 0) {
-        printf ("Impossibile leggere le informazioni sul file\n");
+        printf ("Impossibile leggere le informazioni sulla directory\n");
         exit (1); /* Termina subito il programma con codice 1 */
     }
 

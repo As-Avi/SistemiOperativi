@@ -13,8 +13,8 @@ int main(){
         return 0;
     }
     else{
-        printf("T2\n");wait(NULL);
-        wait(NULL);
+        printf("T2\n");
+        //wait(NULL); analogo
         wait((int *) 0);
     }
     printf("T4\n");

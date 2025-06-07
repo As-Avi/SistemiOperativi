@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+//creazione di un thread che stampa un messaggio e ritorna la lunghezza del messaggio
 
 static void * threadFunc(void *arg){
     printf("From Thread: %s", (char *) arg);

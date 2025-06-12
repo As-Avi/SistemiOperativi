@@ -10,6 +10,7 @@
         "string.h": "c",
         "dirent.h": "c",
         "signal.h": "c",
-        "fcntl.h": "c"
+        "fcntl.h": "c",
+        "semaphore.h": "c"
     }
 }

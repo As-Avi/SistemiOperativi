@@ -11,6 +11,7 @@
         "dirent.h": "c",
         "signal.h": "c",
         "fcntl.h": "c",
-        "semaphore.h": "c"
+        "semaphore.h": "c",
+        "typeinfo": "c"
     }
 }

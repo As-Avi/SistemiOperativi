@@ -12,6 +12,9 @@
         "signal.h": "c",
         "fcntl.h": "c",
         "semaphore.h": "c",
-        "typeinfo": "c"
+        "typeinfo": "c",
+        "types.h": "c",
+        "wait.h": "c",
+        "type_traits": "c"
     }
 }

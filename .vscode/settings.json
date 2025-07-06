@@ -17,6 +17,7 @@
         "wait.h": "c",
         "type_traits": "c",
         "initializer_list": "c",
-        "pthread.h": "c"
+        "pthread.h": "c",
+        "ctype.h": "c"
     }
 }
